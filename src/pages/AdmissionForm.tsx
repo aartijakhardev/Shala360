@@ -22,9 +22,11 @@ import {
   Home,
   GraduationCap,
   Shield,
-  Users
+  Users,
+  Loader2
 } from 'lucide-react';
 import React from 'react';
+import { admissionAPI } from '@/lib/api';
 
 const AdmissionForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -33,6 +35,10 @@ const AdmissionForm = () => {
   const [tcNumber, setTcNumber] = useState('');
   const [photo, setPhoto] = useState<string | null>(null);
   const [tcDocument, setTcDocument] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [birthCertificate, setBirthCertificate] = useState<string | null>(null);
+  const [marksheet, setMarksheet] = useState<string | null>(null);
+  const [aadharCard, setAadharCard] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     // Step 1 - Student Information
@@ -111,21 +117,130 @@ const AdmissionForm = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file size (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error('File size should be less than 2MB');
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
-        if (type === 'photo') {
-          setPhoto(reader.result as string);
-        } else if (type === 'tc') {
-          setTcDocument(reader.result as string);
+        const result = reader.result as string;
+        switch (type) {
+          case 'photo':
+            setPhoto(result);
+            break;
+          case 'tc':
+            setTcDocument(result);
+            break;
+          case 'birth':
+            setBirthCertificate(result);
+            break;
+          case 'marksheet':
+            setMarksheet(result);
+            break;
+          case 'aadhar':
+            setAadharCard(result);
+            break;
         }
       };
       reader.readAsDataURL(file);
     }
   };
 
+  const validateCurrentStep = () => {
+    switch (currentStep) {
+      case 1: // Student Information
+        if (!formData.studentName) {
+          toast.error('Please enter student name');
+          return false;
+        }
+        if (!formData.dateOfBirth) {
+          toast.error('Please select date of birth');
+          return false;
+        }
+        if (!formData.gender) {
+          toast.error('Please select gender');
+          return false;
+        }
+        break;
+
+      case 2: // Previous School Information
+        if (!formData.previousSchool) {
+          toast.error('Please enter previous school name');
+          return false;
+        }
+        if (!formData.lastClass) {
+          toast.error('Please select last class attended');
+          return false;
+        }
+        if (!formData.yearOfPassing) {
+          toast.error('Please enter year of passing');
+          return false;
+        }
+        break;
+
+      case 3: // Parent/Guardian Information
+        if (!formData.fatherName) {
+          toast.error("Please enter father's name");
+          return false;
+        }
+        if (!formData.fatherPhone) {
+          toast.error("Please enter father's phone number");
+          return false;
+        }
+        if (!formData.motherName) {
+          toast.error("Please enter mother's name");
+          return false;
+        }
+        if (!formData.motherPhone) {
+          toast.error("Please enter mother's phone number");
+          return false;
+        }
+        break;
+
+      case 4: // Address Information
+        if (!formData.currentAddress) {
+          toast.error('Please enter current address');
+          return false;
+        }
+        if (!formData.currentCity) {
+          toast.error('Please enter city');
+          return false;
+        }
+        if (!formData.currentState) {
+          toast.error('Please enter state');
+          return false;
+        }
+        if (!formData.currentPincode) {
+          toast.error('Please enter pincode');
+          return false;
+        }
+        if (formData.currentPincode && formData.currentPincode.length !== 6) {
+          toast.error('Pincode must be 6 digits');
+          return false;
+        }
+        break;
+
+      case 5: // Class Admission Details
+        if (!formData.admissionClass) {
+          toast.error('Please select admission class');
+          return false;
+        }
+        if (!formData.medium) {
+          toast.error('Please select medium of instruction');
+          return false;
+        }
+        break;
+
+      case 6: // Documents - no validation needed here as it's the last step
+        break;
+    }
+    return true;
+  };
+
   const nextStep = () => {
-    if (currentStep === 2 && !tcVerified) {
-      setShowTcDialog(true);
+    if (!validateCurrentStep()) {
       return;
     }
     setCurrentStep(prev => Math.min(prev + 1, 6));
@@ -133,11 +248,78 @@ const AdmissionForm = () => {
 
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
-  const handleSubmit = () => {
-    toast.success('Admission form submitted successfully! 🎉', {
-      description: 'Your application is under review. You will be notified soon.',
-      duration: 5000,
-    });
+  const validateForm = () => {
+    // Step 1 validations
+    if (!formData.studentName || !formData.dateOfBirth || !formData.gender) {
+      toast.error('Please fill all required fields in Student Information');
+      return false;
+    }
+
+    // Step 2 validations
+    if (!formData.previousSchool || !formData.lastClass || !formData.yearOfPassing) {
+      toast.error('Please fill all required fields in Previous School Information');
+      return false;
+    }
+
+    // Step 3 validations
+    if (!formData.fatherName || !formData.fatherPhone || !formData.motherName || !formData.motherPhone) {
+      toast.error('Please fill all required parent information');
+      return false;
+    }
+
+    // Step 4 validations
+    if (!formData.currentAddress || !formData.currentCity || !formData.currentState || !formData.currentPincode) {
+      toast.error('Please fill all required address fields');
+      return false;
+    }
+
+    // Step 5 validations
+    if (!formData.admissionClass || !formData.medium) {
+      toast.error('Please fill all required admission details');
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const submissionData = {
+        ...formData,
+        photo: photo,
+        birthCertificate: birthCertificate,
+        transferCertificate: tcDocument,
+        marksheet: marksheet,
+        aadharCard: aadharCard,
+      };
+
+      const response = await admissionAPI.submit(submissionData);
+      
+      if (response.success) {
+        toast.success('Admission form submitted successfully! 🎉', {
+          description: `Application Number: ${response.data.applicationNumber}`,
+          duration: 7000,
+        });
+
+        // Reset form after successful submission
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      }
+    } catch (error: any) {
+      console.error('Submission error:', error);
+      toast.error('Failed to submit application', {
+        description: error.response?.data?.message || error.message || 'Please try again later',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const steps = [
@@ -646,11 +828,26 @@ const AdmissionForm = () => {
                   <div className="space-y-2">
                     <Label>Birth Certificate *</Label>
                     <div className="border-2 border-dashed rounded-lg p-4 text-center hover:border-primary transition-colors">
-                      <input type="file" className="hidden" id="birth-cert" />
+                      <input 
+                        type="file" 
+                        className="hidden" 
+                        id="birth-cert"
+                        accept="image/*,.pdf"
+                        onChange={(e) => handleImageUpload(e, 'birth')}
+                      />
                       <label htmlFor="birth-cert" className="cursor-pointer">
-                        <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                        <p className="text-sm">Upload Birth Certificate</p>
-                        <p className="text-xs text-muted-foreground">PDF, JPG up to 2MB</p>
+                        {!birthCertificate ? (
+                          <>
+                            <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                            <p className="text-sm">Upload Birth Certificate</p>
+                            <p className="text-xs text-muted-foreground">PDF, JPG up to 2MB</p>
+                          </>
+                        ) : (
+                          <div className="text-green-600">
+                            <CheckCircle className="h-8 w-8 mx-auto mb-2" />
+                            <p className="text-sm">Birth Certificate Uploaded</p>
+                          </div>
+                        )}
                       </label>
                     </div>
                   </div>
@@ -658,7 +855,13 @@ const AdmissionForm = () => {
                   <div className="space-y-2">
                     <Label>Transfer Certificate (TC) *</Label>
                     <div className="border-2 border-dashed rounded-lg p-4 text-center hover:border-primary transition-colors">
-                      <input type="file" className="hidden" id="tc-cert" onChange={(e) => handleImageUpload(e, 'tc')} />
+                      <input 
+                        type="file" 
+                        className="hidden" 
+                        id="tc-cert" 
+                        accept="image/*,.pdf"
+                        onChange={(e) => handleImageUpload(e, 'tc')} 
+                      />
                       <label htmlFor="tc-cert" className="cursor-pointer">
                         {!tcDocument ? (
                           <>
@@ -679,11 +882,26 @@ const AdmissionForm = () => {
                   <div className="space-y-2">
                     <Label>Last Class Marksheet *</Label>
                     <div className="border-2 border-dashed rounded-lg p-4 text-center hover:border-primary transition-colors">
-                      <input type="file" className="hidden" id="marksheet" />
+                      <input 
+                        type="file" 
+                        className="hidden" 
+                        id="marksheet"
+                        accept="image/*,.pdf"
+                        onChange={(e) => handleImageUpload(e, 'marksheet')}
+                      />
                       <label htmlFor="marksheet" className="cursor-pointer">
-                        <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                        <p className="text-sm">Upload Marksheet</p>
-                        <p className="text-xs text-muted-foreground">PDF, JPG up to 2MB</p>
+                        {!marksheet ? (
+                          <>
+                            <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                            <p className="text-sm">Upload Marksheet</p>
+                            <p className="text-xs text-muted-foreground">PDF, JPG up to 2MB</p>
+                          </>
+                        ) : (
+                          <div className="text-green-600">
+                            <CheckCircle className="h-8 w-8 mx-auto mb-2" />
+                            <p className="text-sm">Marksheet Uploaded</p>
+                          </div>
+                        )}
                       </label>
                     </div>
                   </div>
@@ -691,11 +909,26 @@ const AdmissionForm = () => {
                   <div className="space-y-2">
                     <Label>Aadhar Card</Label>
                     <div className="border-2 border-dashed rounded-lg p-4 text-center hover:border-primary transition-colors">
-                      <input type="file" className="hidden" id="aadhar" />
+                      <input 
+                        type="file" 
+                        className="hidden" 
+                        id="aadhar"
+                        accept="image/*,.pdf"
+                        onChange={(e) => handleImageUpload(e, 'aadhar')}
+                      />
                       <label htmlFor="aadhar" className="cursor-pointer">
-                        <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                        <p className="text-sm">Upload Aadhar</p>
-                        <p className="text-xs text-muted-foreground">PDF, JPG up to 2MB</p>
+                        {!aadharCard ? (
+                          <>
+                            <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                            <p className="text-sm">Upload Aadhar</p>
+                            <p className="text-xs text-muted-foreground">PDF, JPG up to 2MB</p>
+                          </>
+                        ) : (
+                          <div className="text-green-600">
+                            <CheckCircle className="h-8 w-8 mx-auto mb-2" />
+                            <p className="text-sm">Aadhar Card Uploaded</p>
+                          </div>
+                        )}
                       </label>
                     </div>
                   </div>
@@ -720,9 +953,22 @@ const AdmissionForm = () => {
                   <ChevronRight className="h-4 w-4 ml-2" />
                 </Button>
               ) : (
-                <Button onClick={handleSubmit} className="bg-green-600 hover:bg-green-700">
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Submit Application
+                <Button 
+                  onClick={handleSubmit} 
+                  className="bg-green-600 hover:bg-green-700"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Submit Application
+                    </>
+                  )}
                 </Button>
               )}
             </div>
