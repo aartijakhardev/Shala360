@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import React from 'react';
 import { admissionAPI } from '@/lib/api';
+import { useNavigate } from 'react-router-dom';
 
 const AdmissionForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -39,7 +40,7 @@ const AdmissionForm = () => {
   const [birthCertificate, setBirthCertificate] = useState<string | null>(null);
   const [marksheet, setMarksheet] = useState<string | null>(null);
   const [aadharCard, setAadharCard] = useState<string | null>(null);
-
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     // Step 1 - Student Information
     studentName: '',
@@ -112,6 +113,7 @@ const AdmissionForm = () => {
         description: `TC Number: ${tcNumber} is valid`,
       });
     }, 1000);
+    navigate('/students');
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, type: string) => {

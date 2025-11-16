@@ -94,3 +94,50 @@ export const admissionAPI = {
   },
 };
 
+// Student API endpoints
+export const studentAPI = {
+  /**
+   * Get all students (approved admissions)
+   */
+  getAll: async (params?: {
+    class?: string;
+    academicYear?: string;
+    status?: string;
+    page?: number;
+    limit?: number;
+    search?: string;
+  }) => {
+    const response = await api.get('/admissions', { 
+      params: { 
+        ...params, 
+        status: params?.status || 'approved' // Only show approved students by default
+      } 
+    });
+    return response.data;
+  },
+
+  /**
+   * Get student by ID
+   */
+  getById: async (id: string) => {
+    const response = await api.get(`/admissions/${id}`);
+    return response.data;
+  },
+
+  /**
+   * Update student information
+   */
+  update: async (id: string, data: any) => {
+    const response = await api.patch(`/admissions/${id}`, data);
+    return response.data;
+  },
+
+  /**
+   * Delete student
+   */
+  delete: async (id: string) => {
+    const response = await api.delete(`/admissions/${id}`);
+    return response.data;
+  },
+};
+
