@@ -58,6 +58,20 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      fontFamily: {
+        'sans': ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        'heading': ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
+        'dashboard': ['Inter', 'system-ui', 'sans-serif'],
+        'metric': ['Lexend', 'Inter', 'system-ui', 'sans-serif'],
+        'mono': ['JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'monospace'],
+      },
+      fontSize: {
+        'dashboard-title': ['2.25rem', { lineHeight: '2.5rem', fontWeight: '700' }],
+        'dashboard-subtitle': ['1.125rem', { lineHeight: '1.75rem', fontWeight: '500' }],
+        'metric-large': ['2.5rem', { lineHeight: '1', fontWeight: '800' }],
+        'metric-medium': ['1.875rem', { lineHeight: '2.25rem', fontWeight: '700' }],
+        'metric-small': ['1.5rem', { lineHeight: '2rem', fontWeight: '600' }],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

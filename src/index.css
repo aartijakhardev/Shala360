@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&family=Lexend:wght@300;400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -107,11 +109,70 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1, "ss02" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
+    font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-feature-settings: "liga" 1, "kern" 1;
+  }
+
+  /* Dashboard-specific typography */
+  .dashboard-title {
+    font-family: 'Poppins', sans-serif;
+    @apply font-bold tracking-tight;
+  }
+
+  .dashboard-subtitle {
+    font-family: 'Inter', sans-serif;
+    @apply font-medium text-muted-foreground;
+  }
+
+  .dashboard-label {
+    font-family: 'Inter', sans-serif;
+    @apply font-medium text-sm;
+  }
+
+  .dashboard-metric {
+    font-family: 'Lexend', 'Inter', sans-serif;
+    @apply font-bold;
+  }
+
+  /* Form and input styling */
+  input, textarea, select {
+    font-family: 'Inter', sans-serif;
+    @apply text-sm;
+  }
+
+  /* Button typography */
+  button {
+    font-family: 'Inter', sans-serif;
+    @apply font-medium;
+  }
+
+  /* Table typography */
+  table {
+    font-family: 'Inter', sans-serif;
+  }
+
+  th {
+    @apply font-semibold;
+  }
+
+  /* Card typography */
+  .card-title {
+    font-family: 'Poppins', sans-serif;
+    @apply font-semibold;
+  }
+
+  .card-description {
+    font-family: 'Inter', sans-serif;
+    @apply text-muted-foreground;
   }
 }
 
@@ -132,6 +193,93 @@ All colors MUST be HSL.
     @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5;
   }
 
+  /* Dashboard Typography Utilities */
+  .font-dashboard {
+    font-family: 'Inter', sans-serif;
+  }
+
+  .font-heading {
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .font-metric {
+    font-family: 'Lexend', 'Inter', sans-serif;
+  }
+
+  /* Dashboard Card Enhancements */
+  .dashboard-card {
+    @apply bg-card text-card-foreground shadow-card border rounded-xl p-6 transition-all duration-200;
+    @apply hover:shadow-lg hover:-translate-y-0.5;
+  }
+
+  .metric-card {
+    @apply dashboard-card relative overflow-hidden;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+  }
+
+  .metric-card::before {
+    content: '';
+    @apply absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary to-primary/50;
+  }
+
+  /* Professional Button Styles */
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90;
+    @apply shadow-lg hover:shadow-xl transition-all duration-200;
+  }
+
+  .btn-success {
+    @apply bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700;
+    @apply shadow-lg hover:shadow-xl transition-all duration-200;
+  }
+
+  .btn-danger {
+    @apply bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700;
+    @apply shadow-lg hover:shadow-xl transition-all duration-200;
+  }
+
+  /* Status Badge Enhancements */
+  .status-active {
+    @apply bg-gradient-to-r from-green-500 to-green-600 text-white font-medium;
+    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
+  }
+
+  .status-leave {
+    @apply bg-gradient-to-r from-orange-400 to-orange-500 text-white font-medium;
+    box-shadow: 0 2px 4px rgba(249, 115, 22, 0.2);
+  }
+
+  .status-inactive {
+    @apply bg-gradient-to-r from-gray-400 to-gray-500 text-white font-medium;
+    box-shadow: 0 2px 4px rgba(107, 114, 128, 0.2);
+  }
+
+  /* Enhanced Input Styles */
+  .form-input {
+    @apply border-border/60 focus:border-primary/60 focus:ring-primary/20;
+    @apply transition-all duration-200 font-dashboard;
+    backdrop-filter: blur(10px);
+  }
+
+  /* Modern Table Styles */
+  .dashboard-table {
+    @apply font-dashboard text-sm;
+  }
+
+  .dashboard-table th {
+    @apply bg-muted/50 font-semibold text-muted-foreground uppercase text-xs tracking-wider;
+    @apply border-b border-border/60;
+  }
+
+  .dashboard-table td {
+    @apply border-b border-border/30 py-3;
+    @apply transition-colors duration-150;
+  }
+
+  .dashboard-table tr:hover td {
+    @apply bg-muted/30;
+  }
+
   /* Mobile responsive utilities */
   .mobile-scroll {
     @apply overflow-x-auto -mx-4 sm:mx-0;
@@ -139,5 +287,38 @@ All colors MUST be HSL.
 
   .mobile-table-wrapper {
     @apply overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0;
+  }
+
+  /* Loading Animation */
+  .loading-shimmer {
+    @apply animate-pulse bg-gradient-to-r from-muted via-muted/50 to-muted;
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  /* Professional Avatar Styles */
+  .avatar-professional {
+    @apply ring-2 ring-primary/10 shadow-sm;
+    @apply transition-all duration-200;
+  }
+
+  .avatar-professional:hover {
+    @apply ring-primary/20 shadow-md scale-105;
+  }
+
+  /* Form Section Headers */
+  .section-header {
+    @apply font-heading text-lg font-semibold text-foreground/90 mb-4;
+    @apply flex items-center gap-2;
+  }
+
+  .section-header::before {
+    content: '';
+    @apply w-1 h-6 bg-gradient-to-b from-primary to-primary/50 rounded-full;
   }
 }

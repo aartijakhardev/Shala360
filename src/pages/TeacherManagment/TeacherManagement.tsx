@@ -187,11 +187,11 @@ const TeacherManagement = () => {
       <div className="pt-8 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold flex items-center gap-2">
+            <h1 className="font-heading text-dashboard-title flex items-center gap-2">
               <GraduationCap className="h-8 w-8 text-primary" />
               Teacher Management
             </h1>
-            <p className="text-muted-foreground">Manage teaching staff and their assignments</p>
+            <p className="font-dashboard text-dashboard-subtitle">Manage teaching staff and their assignments</p>
           </div>
           <div className="flex gap-2">
             <Button 
@@ -203,74 +203,74 @@ const TeacherManagement = () => {
               Deleted Teachers
             </Button>
             <Button className="gap-2" onClick={() => navigate('/teacher-management/add')}>
-              <Plus className="h-4 w-4" />
-              Add New Teacher
-            </Button>
+            <Plus className="h-4 w-4" />
+            Add New Teacher
+          </Button>
           </div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-5">
-          <Card>
+        <div className="grid gap-4 md:grid-cols-4">
+          <Card className="metric-card">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium">Total Teachers</CardTitle>
+              <CardTitle className="dashboard-label">Total Teachers</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{statistics.totalActive}</div>
+              <div className="font-metric text-metric-medium text-primary">{statistics.totalActive}</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="metric-card">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium">Active</CardTitle>
+              <CardTitle className="dashboard-label">Active</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">
+              <div className="font-metric text-metric-medium text-green-600">
                 {activeTeachers}
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="metric-card">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium">On Leave</CardTitle>
+              <CardTitle className="dashboard-label">On Leave</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-orange-600">
+              <div className="font-metric text-metric-medium text-orange-600">
                 {onLeaveTeachers}
               </div>
             </CardContent>
           </Card>
-          <Card>
+          {/* <Card className="metric-card">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium">Subjects</CardTitle>
+              <CardTitle className="dashboard-label">Subjects</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="font-metric text-metric-medium text-blue-600">
                 {totalSubjects}
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
           <Card 
-            className="cursor-pointer hover:bg-muted/50 transition-colors"
+            className="metric-card cursor-pointer hover:bg-muted/50 transition-all duration-200 hover:scale-105"
             onClick={() => navigate('/teacher-management/deleted')}
           >
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Trash2 className="h-4 w-4" />
+              <CardTitle className="dashboard-label flex items-center gap-2">
+                <Trash2 className="h-4 w-4 text-red-500" />
                 Deleted
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">
+              <div className="font-metric text-metric-medium text-red-600">
                 {statistics.deletedTeachers}
               </div>
-              <p className="text-xs text-muted-foreground">Click to view</p>
+              <p className="text-xs text-muted-foreground font-dashboard">Click to view</p>
             </CardContent>
           </Card>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>All Teachers</CardTitle>
-            <CardDescription>View and manage teacher information</CardDescription>
+            <CardTitle className="font-heading text-xl">All Teachers</CardTitle>
+            <CardDescription className="font-dashboard">View and manage teacher information</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-4 mb-6">
@@ -280,7 +280,7 @@ const TeacherManagement = () => {
                   placeholder="Search by name, ID, or subject..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 font-dashboard form-input"
                 />
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -333,18 +333,18 @@ const TeacherManagement = () => {
             </div>
 
             <div className="rounded-md border">
-              <Table>
+              <Table className="dashboard-table">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Photo</TableHead>
-                    <TableHead>Teacher ID</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Subject</TableHead>
-                    <TableHead>Qualification</TableHead>
-                    <TableHead>Experience</TableHead>
-                    <TableHead>Contact</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className="font-heading">Photo</TableHead>
+                    <TableHead className="font-heading">Teacher ID</TableHead>
+                    <TableHead className="font-heading">Name</TableHead>
+                    <TableHead className="font-heading">Subject</TableHead>
+                    <TableHead className="font-heading">Qualification</TableHead>
+                    <TableHead className="font-heading">Experience</TableHead>
+                    <TableHead className="font-heading">Contact</TableHead>
+                    <TableHead className="font-heading">Status</TableHead>
+                    <TableHead className="font-heading text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -365,18 +365,18 @@ const TeacherManagement = () => {
                     filteredTeachers.map((teacher) => (
                       <TableRow key={teacher._id}>
                         <TableCell>
-                          <Avatar className="h-10 w-10">
+                          <Avatar className="avatar-professional h-10 w-10">
                             <AvatarImage src={teacher.photo?.url} alt={teacher.name} />
-                            <AvatarFallback>{getInitials(teacher.name)}</AvatarFallback>
+                            <AvatarFallback className="font-heading font-semibold">{getInitials(teacher.name)}</AvatarFallback>
                           </Avatar>
                         </TableCell>
-                        <TableCell className="font-medium">{teacher.teacherId}</TableCell>
-                        <TableCell className="font-medium">{teacher.name}</TableCell>
-                        <TableCell>{teacher.subject}</TableCell>
-                        <TableCell>{teacher.qualification || '-'}</TableCell>
-                        <TableCell>{teacher.experience || '-'}</TableCell>
+                        <TableCell className="font-mono font-medium text-primary">{teacher.teacherId}</TableCell>
+                        <TableCell className="font-dashboard font-semibold">{teacher.name}</TableCell>
+                        <TableCell className="font-dashboard">{teacher.subject}</TableCell>
+                        <TableCell className="font-dashboard">{teacher.qualification || '-'}</TableCell>
+                        <TableCell className="font-dashboard">{teacher.experience || '-'}</TableCell>
                         <TableCell>
-                          <div className="flex flex-col gap-1 text-xs text-muted-foreground">
+                          <div className="flex flex-col gap-1 text-xs text-muted-foreground font-dashboard">
                             <span className="flex items-center gap-1">
                               <Mail className="h-3 w-3" /> {teacher.email || 'N/A'}
                             </span>
@@ -386,7 +386,10 @@ const TeacherManagement = () => {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant={getStatusBadgeVariant(teacher.status)}>
+                          <Badge 
+                            variant={getStatusBadgeVariant(teacher.status)}
+                            className="font-dashboard font-medium"
+                          >
                             {teacher.status === 'Active' && '🟢 '}
                             {teacher.status === 'On Leave' && '🟠 '}
                             {teacher.status === 'Inactive' && '🔴 '}
@@ -400,6 +403,7 @@ const TeacherManagement = () => {
                               size="icon" 
                               title="View"
                               onClick={() => navigate(`/teacher-management/view/${teacher._id}`)}
+                              className="hover:bg-blue-50 hover:text-blue-600"
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -408,27 +412,33 @@ const TeacherManagement = () => {
                               size="icon" 
                               title="Edit"
                               onClick={() => navigate(`/teacher-management/edit/${teacher._id}`)}
+                              className="hover:bg-green-50 hover:text-green-600"
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
-                                <Button variant="ghost" size="icon" title="Delete">
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  title="Delete"
+                                  className="hover:bg-red-50 hover:text-red-600"
+                                >
                                   <Trash2 className="h-4 w-4 text-destructive" />
                                 </Button>
                               </AlertDialogTrigger>
                               <AlertDialogContent>
                                 <AlertDialogHeader>
-                                  <AlertDialogTitle>Delete Teacher</AlertDialogTitle>
-                                  <AlertDialogDescription>
+                                  <AlertDialogTitle className="font-heading">Delete Teacher</AlertDialogTitle>
+                                  <AlertDialogDescription className="font-dashboard">
                                     Are you sure you want to delete <strong>{teacher.name}</strong>? This will move them to the deleted teachers list and they can be restored later.
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogCancel className="font-dashboard">Cancel</AlertDialogCancel>
                                   <AlertDialogAction 
                                     onClick={() => handleDeleteTeacher(teacher._id, teacher.name)}
-                                    className="bg-destructive hover:bg-destructive/90"
+                                    className="bg-destructive hover:bg-destructive/90 font-dashboard"
                                   >
                                     Delete
                                   </AlertDialogAction>
@@ -437,7 +447,7 @@ const TeacherManagement = () => {
                             </AlertDialog>
                           </div>
                         </TableCell>
-                      </TableRow>
+                    </TableRow>
                     ))
                   )}
                 </TableBody>
