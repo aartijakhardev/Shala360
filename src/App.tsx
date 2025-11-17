@@ -16,7 +16,11 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 // Admin Pages
 import StudentManagement from "./pages/StudentManagement";
-import TeacherManagement from "./pages/TeacherManagement";
+import TeacherManagement from "./pages/TeacherManagment/TeacherManagement";
+import AddNewTeacher from "./pages/TeacherManagment/AddNewTeacher";
+import EditNewTeacher from "./pages/TeacherManagment/EditNewTeacher";
+import ViewNewTeacher from "./pages/TeacherManagment/ViewNewTeacher";
+import DeletedTeachers from "./pages/TeacherManagment/DeletedTeachers";
 import FeeManagement from "./pages/FeeManagement";
 import TeacherAttendanceAdmin from "./pages/TeacherAttendanceAdmin";
 // Teacher Pages
@@ -54,6 +58,11 @@ const App = () => (
               {/* Admin Routes */}
               <Route path="/students" element={<ErrorBoundary><StudentManagement /></ErrorBoundary>} />
               <Route path="/teachers" element={<ErrorBoundary><TeacherManagement /></ErrorBoundary>} />
+              <Route path="/teacher-management" element={<ErrorBoundary><TeacherManagement /></ErrorBoundary>} />
+              <Route path="/teacher-management/add" element={<ErrorBoundary><AddNewTeacher /></ErrorBoundary>} />
+              <Route path="/teacher-management/edit/:id" element={<ErrorBoundary><EditNewTeacher /></ErrorBoundary>} />
+              <Route path="/teacher-management/view/:id" element={<ErrorBoundary><ViewNewTeacher /></ErrorBoundary>} />
+              <Route path="/teacher-management/deleted" element={<ErrorBoundary><DeletedTeachers /></ErrorBoundary>} />
               <Route path="/fees" element={<ErrorBoundary><FeeManagement /></ErrorBoundary>} />
               <Route path="/admission" element={<ErrorBoundary><AdmissionForm /></ErrorBoundary>} />
               <Route path="/approval" element={<ErrorBoundary><AdminApproval /></ErrorBoundary>} />
